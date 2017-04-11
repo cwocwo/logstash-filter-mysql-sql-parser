@@ -26,7 +26,7 @@ class LogStash::Filters::MysqlSqlParser < LogStash::Filters::Base
   config_name "mysql_sql_parser"
   
   # Replace the message with this value.
-  config :pretty_format, :validate => :boolean, :default => true
+  config :pretty_format, :validate => :boolean, :default => false
   config :to_lowercase, :validate => :boolean, :default => true
   
 

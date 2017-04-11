@@ -6,7 +6,7 @@ describe LogStash::Filters::MysqlSqlParser do
   describe "Set to Hello World" do
     let(:config) do <<-CONFIG
       filter {
-        mysql-sql-parser {
+        mysql_sql_parser {
           message => "Hello World"
         }
       }
