@@ -1,6 +1,12 @@
 # encoding: utf-8
 require "logstash/filters/base"
 require "logstash/namespace"
+require "./jars/druid-1.0.18.jar"
+
+java_import java.lang.StringBuilder
+java_import com.alibaba.druid.util.JdbcConstants
+java_import com.alibaba.druid.sql.SQLUtils
+java_import com.alibaba.druid.sql.dialect.mysql.visitor.MySqlParameterizedOutputVisitor
 
 # This  filter will replace the contents of the default 
 # message field with whatever you specify in the configuration.
@@ -20,7 +26,8 @@ class LogStash::Filters::MysqlSqlParser < LogStash::Filters::Base
   config_name "mysql-sql-parser"
   
   # Replace the message with this value.
-  config :message, :validate => :string, :default => "Hello World!"
+  config :pretty_format, :validate => :boolean, :default => true
+  config :to_lowercase, :validate => :boolean, :default => true
   
 
   public
@@ -30,13 +37,16 @@ class LogStash::Filters::MysqlSqlParser < LogStash::Filters::Base
 
   public
   def filter(event)
-
-    if @message
-      # Replace the event message with our message as configured in the
-      # config file.
-      event.set("message", @message)
-    end
-
+	sql = event.get("sql")
+	db_type = JdbcConstants::MYSQL
+	stmts = SQLUtils.parseStatements(sql, db_type)
+	stmts.each {|i| 
+		parsed_sql = StringBuilder.new(); 
+		visitor = MySqlParameterizedOutputVisitor.new(parsed_sql);
+		visitor.setPrettyFormat(@pretty_format);
+		i.accept(visitor);
+		event.set("sql_tpl", @to_lowercase ? parsed_sql.to_s.downcase : parsed_sql.to_s)
+	}
     # filter_matched should go in the last line of our successful code
     filter_matched(event)
   end # def filter
