@@ -1,2 +1,2 @@
-# logstash-filter-mysql-sql-parser
+# logstash-filter-sqlparser
 Example filter plugin. This should help bootstrap your effort to write your own filter plugin!

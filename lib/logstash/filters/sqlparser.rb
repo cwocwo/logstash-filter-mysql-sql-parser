@@ -1,18 +1,18 @@
 # encoding: utf-8
 require "logstash/filters/base"
 require "logstash/namespace"
-require "./jars/druid-1.0.18.jar"
+require "java"
+require "druid-1.0.18.jar"
 
 java_import java.lang.StringBuilder
 java_import com.alibaba.druid.util.JdbcConstants
 java_import com.alibaba.druid.sql.SQLUtils
 java_import com.alibaba.druid.sql.dialect.mysql.visitor.MySqlParameterizedOutputVisitor
-
 # This  filter will replace the contents of the default 
 # message field with whatever you specify in the configuration.
 #
 # It is only intended to be used as an .
-class LogStash::Filters::MysqlSqlParser < LogStash::Filters::Base
+class LogStash::Filters::Sqlparser < LogStash::Filters::Base
 
   # Setting the config_name here is required. This is how you
   # configure this filter from your Logstash config.
@@ -23,7 +23,7 @@ class LogStash::Filters::MysqlSqlParser < LogStash::Filters::Base
   #   }
   # }
   #
-  config_name "mysql_sql_parser"
+  config_name "sqlparser"
   
   # Replace the message with this value.
   config :pretty_format, :validate => :boolean, :default => false
@@ -37,7 +37,8 @@ class LogStash::Filters::MysqlSqlParser < LogStash::Filters::Base
 
   public
   def filter(event)
-	sql = event.get("sql")
+
+    sql = event.get("sql")
 	db_type = JdbcConstants::MYSQL
 	stmts = SQLUtils.parseStatements(sql, db_type)
 	stmts.each {|i| 
@@ -47,7 +48,8 @@ class LogStash::Filters::MysqlSqlParser < LogStash::Filters::Base
 		i.accept(visitor);
 		event.set("sql_tpl", @to_lowercase ? parsed_sql.to_s.downcase : parsed_sql.to_s)
 	}
+
     # filter_matched should go in the last line of our successful code
     filter_matched(event)
   end # def filter
-end # class LogStash::Filters::MysqlSqlParser
+end # class LogStash::Filters::Sqlparser

@@ -1,12 +1,12 @@
 # encoding: utf-8
 require_relative '../spec_helper'
-require "logstash/filters/mysql-sql-parser"
+require "logstash/filters/sqlparser"
 
-describe LogStash::Filters::MysqlSqlParser do
+describe LogStash::Filters::Sqlparser do
   describe "Set to Hello World" do
     let(:config) do <<-CONFIG
       filter {
-        mysql_sql_parser {
+        sqlparser {
           message => "Hello World"
         }
       }
