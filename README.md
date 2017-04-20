@@ -1,6 +1,7 @@
 # Logstash Plugin
 
-This is a plugin for [Logstash](https://github.com/elastic/logstash).
+This is a plugin for [Logstash](https://github.com/elastic/logstash). 
+Used to parser mysql’s sql in slow log.
 
 It is fully free and fully open source. The license is Apache 2.0, meaning you are pretty much free to use it however you want in whatever way.
 
@@ -57,7 +58,7 @@ bin/logstash-plugin install --no-verify
 ```
 - Run Logstash with your plugin
 ```sh
-bin/logstash -e 'filter {awesome {}}'
+bin/logstash -e 'filter {sqlparser {}}'
 ```
 At this point any modifications to the plugin code will be applied to this local Logstash setup. After modifying the plugin, simply rerun Logstash.
 
